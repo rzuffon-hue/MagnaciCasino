@@ -1,0 +1,214 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile in Magnaci Casino",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "uid": { "type": "string" },
+        "login": { "type": "string" },
+        "nickname": { "type": "string" },
+        "avatarUrl": { "type": "string" },
+        "status": { "type": "string" },
+        "lastActiveAt": { "type": "string" },
+        "currentRoomId": { "type": "string" },
+        "balance": { "type": "number" },
+        "role": { "type": "string" }
+      },
+      "required": ["id", "login", "balance"]
+    },
+    "FriendRequest": {
+      "title": "FriendRequest",
+      "description": "Friend request between two players",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "fromUserId": { "type": "string" },
+        "toUserId": { "type": "string" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["fromUserId", "toUserId", "status"]
+    },
+    "Friend": {
+      "title": "Friend",
+      "description": "Friendship connection between players",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userIds": { "type": "array", "items": { "type": "string" } },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["userIds"]
+    },
+    "PrivateChat": {
+      "title": "PrivateChat",
+      "description": "1-on-1 private chat conversation",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "participants": { "type": "array", "items": { "type": "string" } },
+        "lastMessage": { "type": "string" },
+        "lastMessageAt": { "type": "string" },
+        "lastSenderId": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["participants"]
+    },
+    "PrivateMessage": {
+      "title": "PrivateMessage",
+      "description": "Message in a private chat",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "senderId": { "type": "string" },
+        "text": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "readBy": { "type": "array", "items": { "type": "string" } }
+      },
+      "required": ["senderId", "text"]
+    },
+    "Statistic": {
+      "title": "Statistic",
+      "description": "User game statistics",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "totalGames": { "type": "number" }
+      },
+      "required": ["userId"]
+    },
+    "Room": {
+      "title": "Room",
+      "description": "Casino room or table",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" }
+      },
+      "required": ["id", "name"]
+    },
+    "Tournament": {
+      "title": "Tournament",
+      "description": "Casino tournament",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" }
+      },
+      "required": ["id", "name"]
+    },
+    "Alliance": {
+      "title": "Alliance",
+      "description": "Casino alliance team",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" }
+      },
+      "required": ["id", "name"]
+    },
+    "SystemDoc": {
+      "title": "SystemDoc",
+      "description": "System metadata document",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" }
+      },
+      "required": ["id"]
+    },
+    "GameInvite": {
+      "title": "GameInvite",
+      "description": "Invitation to play a game together in a casino room",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "fromUserId": { "type": "string" },
+        "fromNick": { "type": "string" },
+        "toUserId": { "type": "string" },
+        "toNick": { "type": "string" },
+        "roomId": { "type": "string" },
+        "gameType": { "type": "string" },
+        "status": { "type": "string" },
+        "expiresAt": { "type": "number" }
+      },
+      "required": ["fromUserId", "toUserId", "roomId", "status"]
+    },
+    "QuickMatchQueueItem": {
+      "title": "QuickMatchQueueItem",
+      "description": "Player waiting in the automated quick match queue",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "avatar": { "type": "string" },
+        "nick": { "type": "string" },
+        "selectedGames": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" },
+        "matchedRoomId": { "type": "string" }
+      },
+      "required": ["userId", "nick", "selectedGames", "status", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profiles collection (new standard)"
+    },
+    "/magnaci_users/{userId}": {
+      "schema": "User",
+      "description": "User profiles collection (legacy)"
+    },
+    "/friendRequests/{requestId}": {
+      "schema": "FriendRequest",
+      "description": "Friend requests collection"
+    },
+    "/friends/{friendshipId}": {
+      "schema": "Friend",
+      "description": "Accepted friendships collection"
+    },
+    "/privateChats/{chatId}": {
+      "schema": "PrivateChat",
+      "description": "Private 1-on-1 messenger chats"
+    },
+    "/privateChats/{chatId}/messages/{messageId}": {
+      "schema": "PrivateMessage",
+      "description": "Messages within private 1-on-1 chats"
+    },
+    "/magnaci_statistics/{statId}": {
+      "schema": "Statistic",
+      "description": "User statistics collection"
+    },
+    "/magnaci_rooms/{roomId}": {
+      "schema": "Room",
+      "description": "Casino rooms collection"
+    },
+    "/magnaci_tournaments/{tournamentId}": {
+      "schema": "Tournament",
+      "description": "Casino tournaments collection"
+    },
+    "/magnaci_alliances/{allianceId}": {
+      "schema": "Alliance",
+      "description": "Casino alliances collection"
+    },
+    "/magnaci_system/{docId}": {
+      "schema": "SystemDoc",
+      "description": "System metadata collection"
+    },
+    "/gameInvites/{inviteId}": {
+      "schema": "GameInvite",
+      "description": "Game invitations collection"
+    },
+    "/quickMatchQueue/{queueId}": {
+      "schema": "QuickMatchQueueItem",
+      "description": "Quick match matchmaking queue"
+    }
+  }
+}

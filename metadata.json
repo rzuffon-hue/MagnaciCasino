@@ -1,0 +1,6 @@
+{
+  "name": "Magnaci Casino",
+  "description": "A comic-style social multiplayer gaming platform for friends to play animated dice games, join alliances, compete in tournaments, and win virtual Bananas.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

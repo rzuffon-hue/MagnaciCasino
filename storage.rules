@@ -1,0 +1,44 @@
+rules_version = '2';
+
+// Firebase Storage rules for Magnaci Casino avatar uploads
+// Path: avatars/{userId}/avatar.webp
+service firebase.storage {
+  match /b/{bucket}/o {
+    function isAdmin() {
+      return request.auth != null && (
+        request.auth.token.email in ["rzabamag@gmail.com", "admin@magnaci.pl"] ||
+        request.auth.token.role in ["admin", "Admin", "ADMIN"] ||
+        request.auth.token.isAdmin == true ||
+        request.auth.token.isAdmin == "true" ||
+        request.auth.token.admin == true ||
+        request.auth.token.rank == "R5"
+      );
+    }
+
+    match /avatars/{userId}/{fileName} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.uid == userId;
+      allow delete: if (request.auth != null && request.auth.uid == userId) || isAdmin();
+    }
+
+    match /uploads/{allPaths=**} {
+      allow read: if true;
+      allow write, delete: if isAdmin() || request.auth != null;
+    }
+
+    match /cards/{allPaths=**} {
+      allow read: if true;
+      allow write, delete: if isAdmin() || request.auth != null;
+    }
+
+    match /cardImages/{allPaths=**} {
+      allow read: if true;
+      allow write, delete: if isAdmin() || request.auth != null;
+    }
+
+    match /{allPaths=**} {
+      allow read: if true;
+      allow write, delete: if isAdmin() || request.auth != null;
+    }
+  }
+}

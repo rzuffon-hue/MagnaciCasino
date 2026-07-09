@@ -1,0 +1,225 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Primitive Helpers
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+    function incoming() {
+      return request.resource.data;
+    }
+    function existing() {
+      return resource.data;
+    }
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    function isAdmin() {
+      return isSignedIn() && (
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
+        request.auth.token.email in ["rzabamag@gmail.com", "admin@magnaci.pl"] ||
+        request.auth.token.role in ["admin", "Admin", "ADMIN"] ||
+        request.auth.token.isAdmin == true ||
+        request.auth.token.isAdmin == "true" ||
+        request.auth.token.rank == "R5" ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && (
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ["admin", "Admin", "ADMIN"] ||
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true ||
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == "true" ||
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.rank == "R5" ||
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.wosRank == "R5" ||
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.wosAllianceRank == "R5" ||
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.login in ["rzabamag", "admin", "sebastian", "rzabamag@gmail.com"] ||
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.username in ["rzabamag", "admin", "sebastian", "rzabamag@gmail.com"] ||
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.email in ["rzabamag@gmail.com", "admin@magnaci.pl"]
+        ))
+      );
+    }
+
+    // Global Admin Override
+    match /{document=**} {
+      allow read, write: if isAdmin();
+    }
+
+    // Users Collection (new standard)
+    match /users/{userId} {
+      allow read, write: if true;
+    }
+
+    // Magnaci Users Collection (legacy)
+    match /magnaci_users/{userId} {
+      allow read, write: if true;
+    }
+
+    // Friend Requests Collection
+    match /friendRequests/{requestId} {
+      allow read, write: if true;
+    }
+
+    // Friends Collection
+    match /friends/{friendshipId} {
+      allow read, write: if true;
+    }
+
+    // Private Chats Collection
+    match /privateChats/{chatId} {
+      allow read, write: if true;
+
+      match /messages/{messageId} {
+        allow read, write: if true;
+      }
+    }
+
+    // Magnaci Statistics Collection
+    match /magnaci_statistics/{statId} {
+      allow read, write: if true;
+    }
+
+    // Magnaci Rooms Collection
+    match /magnaci_rooms/{roomId} {
+      allow read, write: if true;
+    }
+
+    // Legacy / Fallback Collections
+    match /rooms/{roomId} {
+      allow read, write: if true;
+    }
+    match /tournaments/{tournamentId} {
+      allow read, write: if true;
+    }
+    match /alliances/{allianceId} {
+      allow read, write: if true;
+    }
+    match /statistics/{statId} {
+      allow read, write: if true;
+    }
+    match /system/{docId} {
+      allow read, write: if true;
+    }
+
+    // Magnaci Tournaments Collection
+    match /magnaci_tournaments/{tournamentId} {
+      allow read, write: if true;
+    }
+
+    // Magnaci Alliances Collection
+    match /magnaci_alliances/{allianceId} {
+      allow read, write: if true;
+    }
+
+    // Magnaci System Collection
+    match /magnaci_system/{docId} {
+      allow read, write: if true;
+    }
+
+    // Game Invites Collection
+    match /gameInvites/{inviteId} {
+      allow read, write: if true;
+    }
+
+    // Collectible Cards System
+    match /cardCategories/{docId} {
+      allow read, write: if true;
+    }
+    match /cards/{docId} {
+      allow read, write: if true;
+    }
+    match /cardCollection/{docId} {
+      allow read, write: if true;
+    }
+    match /playerCards/{docId} {
+      allow read, write: if true;
+    }
+    match /userCards/{docId} {
+      allow read, write: if true;
+    }
+    match /cardImages/{docId} {
+      allow read, write: if true;
+    }
+    match /storage/uploads/cards/{docId} {
+      allow read, write: if true;
+    }
+    match /cardTrades/{docId} {
+      allow read, write: if true;
+    }
+    match /cardTradeHistory/{docId} {
+      allow read, write: if true;
+    }
+
+    // Announcements Collection
+    match /announcements/{announcementId} {
+      allow read, write: if true;
+    }
+
+    // Admins and Bet Events
+    match /admins/{adminId} {
+      allow read, write: if true;
+    }
+    match /betEvents/{eventId} {
+      allow read, write: if true;
+    }
+    match /magnaci_bet_events/{eventId} {
+      allow read, write: if true;
+    }
+
+    // Quick Match Queue Collection
+    match /quickMatchQueue/{queueId} {
+      allow read, write: if true;
+    }
+
+    // RPG Heroes System
+    match /heroes/{docId} {
+      allow read, write: if true;
+    }
+    match /heroCampaign/{docId} {
+      allow read, write: if true;
+    }
+    match /heroChests/{docId} {
+      allow read, write: if true;
+    }
+    match /heroMissions/{docId} {
+      allow read, write: if true;
+    }
+    match /heroTeams/{docId} {
+      allow read, write: if true;
+    }
+    match /heroBattles/{docId} {
+      allow read, write: if true;
+    }
+    match /heroRankings/{docId} {
+      allow read, write: if true;
+    }
+
+    // WOS (Whiteout Survival) Collections
+    match /wosHeroes/{docId} {
+      allow read, write: if true;
+    }
+    match /wosUpgradeCosts/{docId} {
+      allow read, write: if true;
+    }
+    match /wosEvents/{docId} {
+      allow read, write: if true;
+    }
+    match /wosGuides/{docId} {
+      allow read, write: if true;
+    }
+    match /wosSettings/{docId} {
+      allow read, write: if true;
+    }
+    match /wosTips/{docId} {
+      allow read, write: if true;
+    }
+    match /wosUserFavorites/{docId} {
+      allow read, write: if true;
+    }
+    match /wosUserPlans/{docId} {
+      allow read, write: if true;
+    }
+  }
+}
